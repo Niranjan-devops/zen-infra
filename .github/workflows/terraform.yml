@@ -46,7 +46,6 @@ jobs:
   plan:
     name: Terraform Plan
     runs-on: ubuntu-latest
-    environment: dev
     defaults:
       run:
         working-directory: envs/dev
@@ -83,8 +82,8 @@ jobs:
         id: plan
         run: |
           terraform plan \
-            -var="db_password=${{ secrets.DB_PASSWORD }}" \
-            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="db_password=${{ secrets.DEV_DB_PASSWORD }}" \
+            -var="jwt_secret=${{ secrets.DEV_JWT_SECRET }}" \
             -var="github_org=ravdy" \
             -out=tfplan \
             -no-color 2>&1 | tee plan-output.txt
@@ -238,8 +237,8 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform destroy \
-            -var="db_password=${{ secrets.DB_PASSWORD }}" \
-            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="db_password=${{ secrets.DEV_DB_PASSWORD }}" \
+            -var="jwt_secret=${{ secrets.DEV_JWT_SECRET }}" \
             -var="github_org=ravdy" \
             -auto-approve \
             -no-color
