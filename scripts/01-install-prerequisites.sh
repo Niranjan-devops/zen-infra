@@ -165,16 +165,15 @@ echo "--------------------------------------------"
 echo "  Step 2 of 3: ArgoCD"
 echo "--------------------------------------------"
 
-kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-
-kubectl apply -n argocd \
-  -f "https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
-
-info "Waiting for ArgoCD server to be ready (up to 5 minutes)..."
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
+helm upgrade --install argocd argo/argo-cd \
+  --namespace argocd \
+  --create-namespace \
+  --wait --timeout 10m
 
 ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret \
-  -o jsonpath="{.data.password}" | base64 -d)
+  -o jsonpath="{.data.password}" 2>/dev/null | base64 -d || \
+  kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 --decode)
 
 log "ArgoCD installed."
 echo ""

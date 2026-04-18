@@ -193,13 +193,22 @@ log "ESO pods restarted."
 # account and region to pull secrets from, and which service account to
 # use for authentication.
 # =============================================================================
+info "Waiting for ESO CRDs to be fully established..."
+kubectl wait --for=condition=established \
+  crd/clustersecretstores.external-secrets.io \
+  crd/externalsecrets.external-secrets.io \
+  --timeout=60s
+
+# Clear kubectl discovery cache so it picks up the newly registered CRD types
+rm -rf "${HOME}/.kube/cache/discovery"
+
 echo ""
 echo "--------------------------------------------"
 echo "  Step 2 of 4: ClusterSecretStore (IRSA auth)"
 echo "--------------------------------------------"
 
 cat <<EOF | kubectl apply -f -
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ClusterSecretStore
 metadata:
   name: aws-secrets-manager
@@ -229,7 +238,7 @@ echo "  Step 3 of 4: ExternalSecrets -> namespace '$ENV'"
 echo "--------------------------------------------"
 
 cat <<EOF | kubectl apply -f -
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: db-credentials
@@ -262,7 +271,7 @@ spec:
 EOF
 
 cat <<EOF | kubectl apply -f -
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: jwt-secret

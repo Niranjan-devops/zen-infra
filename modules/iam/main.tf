@@ -6,7 +6,7 @@ data "aws_iam_policy_document" "eso_assume_role" {
     condition {
       test     = "StringEquals"
       variable = "${replace(var.oidc_provider_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:kube-system:external-secrets"]
+      values   = ["system:serviceaccount:external-secrets:external-secrets"]
     }
 
     condition {
