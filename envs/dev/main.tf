@@ -1,4 +1,3 @@
-# Initial dev environment setup
 data "aws_caller_identity" "current" {}
 
 module "vpc" {
