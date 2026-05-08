@@ -1,4 +1,4 @@
-# zen-infra — Implementation Guide
+## zen-infra — Implementation Guide
 
 ![Infra Setup](docs/architecture.jpg)
 
